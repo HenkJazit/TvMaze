@@ -22,7 +22,7 @@ namespace TvMaze.Data
             var path = Uri.UnescapeDataString(uriBuilder.Path);
             var directoryName = Path.GetDirectoryName(path) ?? throw new DirectoryNotFoundException();
             
-            _connectionString = Path.Combine(directoryName, config.Value.ConnectionString); ;
+            _connectionString = $"Filename={Path.Combine(directoryName, config.Value.ConnectionString)}; Connection=shared;";
         }
 
         public ILiteDatabase GetDataBase() => new LiteDatabase(_connectionString);

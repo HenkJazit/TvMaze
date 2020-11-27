@@ -7,7 +7,6 @@ namespace TvMaze.Data
     {
         void Insert(TvShow tvShow);
         IEnumerable<TvShow> GetTvShowsPaged(int start = 0, int rows = 10);
-        void DeleteAll();
         int GetLastLoadedId();
     }
 
@@ -51,12 +50,6 @@ namespace TvMaze.Data
             return collection.Query()
                 .OrderByDescending(tvShow => tvShow.MazeTvId)
                 .Limit(1).FirstOrDefault()?.MazeTvId ?? 0;
-        }
-
-        public void DeleteAll()
-        {
-            using var db = _connectionFactory.GetDataBase();
-            db.GetCollection<TvShow>(CollectionName).DeleteAll();
         }
     }
 }
