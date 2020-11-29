@@ -36,11 +36,11 @@ namespace TvMaze.Scraper.Scraping
             var stopWatch = Stopwatch.StartNew();
 
             var showCount = 0;
-            while (await source.OutputAvailableAsync(cancellationToken))
+            while (await source.OutputAvailableAsync(cancellationToken).ConfigureAwait(false))
             {
                 try
                 {
-                    var tvShow = await source.ReceiveAsync(cancellationToken);
+                    var tvShow = await source.ReceiveAsync(cancellationToken).ConfigureAwait(false);
 
                     var response = await httpClient.GetAsync($"shows/{tvShow.Id}/cast", cancellationToken)
                         .ConfigureAwait(false);

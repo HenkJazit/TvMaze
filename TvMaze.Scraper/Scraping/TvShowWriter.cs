@@ -29,9 +29,9 @@ namespace TvMaze.Scraper.Scraping
             _logger.LogInformation($"{nameof(WriteAsync)} START");
             var stopWatch = Stopwatch.StartNew();
 
-            while (await source.OutputAvailableAsync(cancellationToken))
+            while (await source.OutputAvailableAsync(cancellationToken).ConfigureAwait(false))
             {
-                var tvShow = await source.ReceiveAsync(cancellationToken);
+                var tvShow = await source.ReceiveAsync(cancellationToken).ConfigureAwait(false);
 
                 _tvShowRepository.Insert(tvShow);
             }

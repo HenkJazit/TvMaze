@@ -32,9 +32,9 @@ namespace TvMaze.Scraper.Scraping
             _logger.LogInformation($"{nameof(PrepareAsync)} START");
             var stopWatch = Stopwatch.StartNew();
 
-            while (await source.OutputAvailableAsync(cancellationToken))
+            while (await source.OutputAvailableAsync(cancellationToken).ConfigureAwait(false))
             {
-                var tvShowAndCast = await source.ReceiveAsync(cancellationToken);
+                var tvShowAndCast = await source.ReceiveAsync(cancellationToken).ConfigureAwait(false);
                 var tvShow = _tvShowMapper.Map(tvShowAndCast);
 
                 target.Post(tvShow);
