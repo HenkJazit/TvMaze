@@ -51,7 +51,7 @@ namespace TvMaze.Scraper.Scraping
                 _castLoader.LoadAsync(mazeTvShows, mazeCombined, _httpClient, cancellationToken),
                 _tvShowLoader.LoadAsync(mazeTvShows, _httpClient, cancellationToken),
             };
-            await Task.WhenAll(tasks).ConfigureAwait(false);
+            await Task.WhenAll(tasks);
 
             _logger.LogInformation("Finished scraping");
         }

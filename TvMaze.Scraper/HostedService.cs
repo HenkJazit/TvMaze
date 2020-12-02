@@ -17,7 +17,7 @@ namespace TvMaze.Scraper
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            await _scrapeService.ScrapeAsync(cancellationToken).ConfigureAwait(false);
+            await _scrapeService.ScrapeAsync(cancellationToken);
         }
 
         public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

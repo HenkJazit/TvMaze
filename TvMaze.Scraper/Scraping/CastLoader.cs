@@ -36,24 +36,21 @@ namespace TvMaze.Scraper.Scraping
             var stopWatch = Stopwatch.StartNew();
 
             var showCount = 0;
-            while (await source.OutputAvailableAsync(cancellationToken).ConfigureAwait(false))
+            while (await source.OutputAvailableAsync(cancellationToken))
             {
                 try
                 {
-                    var tvShow = await source.ReceiveAsync(cancellationToken).ConfigureAwait(false);
+                    var tvShow = await source.ReceiveAsync(cancellationToken);
 
-                    var response = await httpClient.GetAsync($"shows/{tvShow.Id}/cast", cancellationToken)
-                        .ConfigureAwait(false);
+                    var response = await httpClient.GetAsync($"shows/{tvShow.Id}/cast", cancellationToken);
 
                     if (!response.IsSuccessStatusCode)
                         throw new Exception($"Scraping failed for cast, {response.StatusCode} - {response.ReasonPhrase}");
 
-                    await using var json = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                    await using var json = await response.Content.ReadAsStreamAsync();
 
-                    var cast = await JsonSerializer
-                                   .DeserializeAsync<CastMember[]>(json, JsonSerializerOptions, cancellationToken)
-                                   .ConfigureAwait(false) ??
-                               new CastMember[0];
+                    var cast = await JsonSerializer.DeserializeAsync<CastMember[]>(json, JsonSerializerOptions,
+                        cancellationToken) ?? new CastMember[0];
 
                     target.Post(new TvShowAndCast
                     {

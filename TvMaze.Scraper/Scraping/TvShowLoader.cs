@@ -43,28 +43,36 @@ namespace TvMaze.Scraper.Scraping
 
             while (!cancellationToken.IsCancellationRequested)
             {
-                var response = await httpClient.GetAsync($"shows?page={page}", cancellationToken).ConfigureAwait(false);
-
-                if (response.StatusCode == HttpStatusCode.NotFound)
-                    break;
-
-                if (!response.IsSuccessStatusCode)
-                    throw new Exception($"Scraping failed for tv shows, {response.StatusCode} - {response.ReasonPhrase}");
-
-                await using var json = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-
-                var tvShows =
-                    await JsonSerializer.DeserializeAsync<TvShow[]>(json, JsonSerializerOptions, cancellationToken)
-                        .ConfigureAwait(false) ?? new TvShow[0];
-
-                foreach (var tvShow in tvShows.Where(show => show.Id > lastId))
+                try
                 {
-                    target.Post(tvShow);
+                    var response = await httpClient.GetAsync($"shows?page={page}", cancellationToken);
+
+                    if (response.StatusCode == HttpStatusCode.NotFound)
+                        break;
+
+                    if (!response.IsSuccessStatusCode)
+                        throw new Exception($"Scraping failed for tv shows, {response.StatusCode} - {response.ReasonPhrase}");
+
+                    await using var json = await response.Content.ReadAsStreamAsync();
+
+                    var tvShows =
+                        await JsonSerializer.DeserializeAsync<TvShow[]>(json, JsonSerializerOptions, cancellationToken) ??
+                        new TvShow[0];
+
+                    foreach (var tvShow in tvShows.Where(show => show.Id > lastId))
+                    {
+                        target.Post(tvShow);
+                    }
+
+                    page++;
+
+                    _logger.LogInformation($"{page} TV show pages read");
+
                 }
-
-                page++;
-
-                _logger.LogInformation($"{page} TV show pages read");
+                catch (Exception exception)
+                {
+                    _logger.LogError(exception, $"Failed after {page} Tv Show pages");
+                }
             }
 
             target.Complete();
